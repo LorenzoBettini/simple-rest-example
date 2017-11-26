@@ -22,4 +22,34 @@ public class MyResource {
     public String getIt() {
         return "Got it!\n";
     }
+
+    /**
+     * Method handling HTTP GET requests. The returned object will be sent
+     * to the client as "text/html" media type.
+     *
+     * @return String that will be returned as a text/html response.
+     */
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public String getItHTML() {
+        return "<html>\n" +
+               "<head>\n" +
+               "<title>Hello Jersey</title>\n" +
+               "</head>\n" +
+               "<body>Got it (HTML)!</body>\n" +
+               "</html>\n";
+    }
+
+    /**
+     * Method handling HTTP GET requests. The returned object will be sent
+     * to the client as "text/xml" media type.
+     *
+     * @return String that will be returned as a text/xml response.
+     */
+    @GET
+    @Produces(MediaType.TEXT_XML)
+    public String getItXML() {
+        return "<?xml version=\"1.0\"?>\n" + 
+               "<hello>Got it (XML)!</hello>\n";
+    }
 }
