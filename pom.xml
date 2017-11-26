@@ -33,10 +33,17 @@
 
     <!-- uncomment this to get JSON support: <dependency> <groupId>org.glassfish.jersey.media</groupId> 
       <artifactId>jersey-media-json-binding</artifactId> </dependency> -->
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>3.0.6</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
