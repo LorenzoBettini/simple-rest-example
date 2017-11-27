@@ -97,4 +97,52 @@ public class EmployeeResourceRestAssuredTest {
 			statusCode(204); // Error code: No Content
 	}
 
+	@Test
+	public void testGetAllEmployeesJSON() {
+		given().
+			accept(MediaType.APPLICATION_JSON).
+		when().
+			get(Main.BASE_URI + EMPLOYEES).
+		then().
+			statusCode(200).
+			assertThat().
+			body(
+				"employeeId[0]", equalTo("ID1"),
+				"name[0]", equalTo("First Employee"),
+				"salary[0]", equalTo(1000),
+				// NOTE: "salary" retains its integer type in JSON
+				// so it must be equal to 1000 NOT "1000"
+				"employeeId[1]", equalTo("ID2"),
+				"name[1]", equalTo("Second Employee")
+				// other checks omitted
+			);
+	}
+
+	@Test
+	public void testGetOneEmployeeJSON() {
+		given().
+			accept(MediaType.APPLICATION_JSON).
+		when().
+			get(Main.BASE_URI + EMPLOYEES + "/ID2").
+		then().
+			statusCode(200).
+			assertThat().
+			body(
+				"employeeId", equalTo("ID2"),
+				"name", equalTo("Second Employee"),
+				"salary", equalTo(2000)
+				// NOTE: "salary" retains its integer type in JSON
+				// so it must be equal to 2000 NOT "2000"
+			);
+	}
+
+	@Test
+	public void testGetOneEmployeeWithNonExistingIdJSON() {
+		given().
+			accept(MediaType.APPLICATION_JSON).
+		when().
+			get(Main.BASE_URI + EMPLOYEES + "/foo").
+		then().
+			statusCode(204); // Error code: No Content
+	}
 }
