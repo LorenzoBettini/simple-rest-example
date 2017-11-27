@@ -30,9 +30,21 @@
       <groupId>org.glassfish.jersey.inject</groupId>
       <artifactId>jersey-hk2</artifactId>
     </dependency>
+    <!--
+    We use Moxy instead see below
     <dependency>
       <groupId>org.glassfish.jersey.media</groupId>
       <artifactId>jersey-media-json-binding</artifactId>
+    </dependency>
+    -->
+    <!--
+      We use Moxy to have proper handling of @XmlElement also for JSON
+      without manual configuration 
+      https://jersey.github.io/documentation/latest/media.html#json.moxy
+    -->
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-moxy</artifactId>
     </dependency>
 
     <dependency>
