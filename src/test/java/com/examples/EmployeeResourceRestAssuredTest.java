@@ -10,6 +10,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.examples.repository.EmployeeRepository;
+
 public class EmployeeResourceRestAssuredTest {
 
 	private static final String EMPLOYEES = "employees";
@@ -144,5 +146,21 @@ public class EmployeeResourceRestAssuredTest {
 			get(Main.BASE_URI + EMPLOYEES + "/foo").
 		then().
 			statusCode(204); // Error code: No Content
+	}
+
+	@Test
+	public void testCount() {
+		given().
+		when().
+			get(Main.BASE_URI + EMPLOYEES + "/count").
+		then().
+			statusCode(200).
+			assertThat().
+			body(
+				equalTo(
+					""+EmployeeRepository.instance.findAll().size()));
+		// let's make this test resilient to future changes in the
+		// implementation of the repository (in case we add further
+		// initial records)
 	}
 }

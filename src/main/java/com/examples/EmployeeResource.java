@@ -46,4 +46,15 @@ public class EmployeeResource {
 	public Employee getOneEmployeeJSON(@PathParam("id") String id) {
 		return EmployeeRepository.instance.findOne(id);
 	}
+
+	// returns the number of employees
+	// Use http://localhost:8080/myapp/employees/count
+	// to get the total number of records
+	@GET
+	@Path("count")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getCount() {
+		int count = EmployeeRepository.instance.findAll().size();
+		return String.valueOf(count);
+	}
 }
