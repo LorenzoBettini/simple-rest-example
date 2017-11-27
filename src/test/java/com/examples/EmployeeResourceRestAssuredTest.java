@@ -1,8 +1,10 @@
 package com.examples;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.*;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.ws.rs.core.MediaType;
 
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -163,5 +165,36 @@ public class EmployeeResourceRestAssuredTest {
 		// let's make this test resilient to future changes in the
 		// implementation of the repository (in case we add further
 		// initial records)
+	}
+
+	@Test
+	public void testAddNewEmployee() {
+		performPostAndAssertEmployeeInserted("A new Employee", "ID4");
+		performPostAndAssertEmployeeInserted("Another new Employee", "ID5");
+	}
+
+	private void performPostAndAssertEmployeeInserted(String employeeName, String expectedId) {
+		JsonObject newObject = Json.createObjectBuilder()
+			.add("name", employeeName)
+			.add("salary", 1000)
+			.build();
+
+		given().
+			contentType(MediaType.APPLICATION_JSON).
+			body(newObject.toString()).
+		when().
+			post(Main.BASE_URI + EMPLOYEES).
+		then().
+			statusCode(201).
+			assertThat().
+			body(
+				equalTo(
+				"Employee saved : Employee [employeeId="
+				+ expectedId
+				+ ", name="
+				+ employeeName
+				+ ", salary=1000]"
+				)
+			);
 	}
 }
