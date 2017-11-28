@@ -2,6 +2,7 @@ package com.examples;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -179,6 +180,9 @@ public class EmployeeResourceRestAssuredTest {
 			.add("salary", 1000)
 			.build();
 
+		int employeeNumber = EmployeeRepository.instance.findAll().size();
+		String expectedEmployeeString = expectedEmployeeString(expectedId, employeeName);
+
 		given().
 			contentType(MediaType.APPLICATION_JSON).
 			body(newObject.toString()).
@@ -189,12 +193,24 @@ public class EmployeeResourceRestAssuredTest {
 			assertThat().
 			body(
 				equalTo(
-				"Employee saved : Employee [employeeId="
-				+ expectedId
-				+ ", name="
-				+ employeeName
-				+ ", salary=1000]"
-				)
+					"Employee saved : "
+					+ expectedEmployeeString)
 			);
+
+		// also check that the new employee is effectively added
+		assertEquals(employeeNumber+1,
+				EmployeeRepository.instance.findAll().size());
+		assertEquals(
+				expectedEmployeeString,
+				EmployeeRepository.instance.findAll().
+					get(employeeNumber).toString());
+	}
+
+	private String expectedEmployeeString(String expectedId, String employeeName) {
+		return "Employee [employeeId="
+			+ expectedId
+			+ ", name="
+			+ employeeName
+			+ ", salary=1000]";
 	}
 }
