@@ -11,5 +11,5 @@ cache:
 install: true
 
 script:
- - mvn clean test
+ - mvn clean verify
 
