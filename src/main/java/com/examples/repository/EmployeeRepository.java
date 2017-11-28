@@ -17,6 +17,11 @@ public class EmployeeRepository {
 	private List<Employee> employees = new LinkedList<>();
 
 	private EmployeeRepository() {
+		initialize();
+	}
+
+	public void initialize() {
+		employees.clear();
 		// initialize the "db" with some contents
 		employees.add(new Employee("ID1", "First Employee", 1000));
 		employees.add(new Employee("ID2", "Second Employee", 2000));

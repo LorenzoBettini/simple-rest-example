@@ -19,6 +19,7 @@ public class EmployeeResourceRestAssuredTest {
 
 	@Before
 	public void setUp() throws Exception {
+		EmployeeRepository.instance.initialize();
 		server = Main.startServer();
 	}
 
