@@ -3,10 +3,14 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.examples</groupId>
+  <parent>
+    <groupId>com.examples</groupId>
+    <artifactId>simple-rest-example</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
   <artifactId>simple-rest-service</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
   <name>simple-rest-service</name>
 
   <dependencyManagement>
@@ -95,4 +99,5 @@
     <jersey.version>2.26</jersey.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
 </project>
