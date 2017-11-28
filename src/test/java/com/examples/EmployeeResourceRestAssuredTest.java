@@ -247,6 +247,29 @@ public class EmployeeResourceRestAssuredTest {
 			updatedEmployee);
 	}
 
+	@Test
+	public void testDeleteNonExistingEmployee() {
+		given().
+		when().
+			delete(Main.BASE_URI + EMPLOYEES + "/IDfoo").
+		then().
+			statusCode(304);
+	}
+
+	@Test
+	public void testDeleteExistingEmployee() {
+		given().
+		when().
+			delete(Main.BASE_URI + EMPLOYEES + "/ID1").
+		then().
+			statusCode(200).
+			assertThat().
+			body(
+			equalTo(
+				"Employee removed: Employee [employeeId=ID1, name=First Employee, salary=1000]")
+			);
+	}
+
 	private JsonObject createJsonObjectParam(String employeeName, int salary) {
 		return Json.createObjectBuilder()
 				.add("name", employeeName)

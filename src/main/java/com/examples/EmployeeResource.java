@@ -3,6 +3,7 @@ package com.examples;
 import java.util.Collection;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -108,6 +109,27 @@ public class EmployeeResource {
 				"updated with: " +
 				employee;
 			return Response.ok().entity(result).build();
+		}
+	}
+
+	/**
+	 * Deletes the Employee with the given id.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@DELETE
+	@Path("/{id}")
+	public Response deleteEmployee(@PathParam("id") String id) {
+		Employee removed = EmployeeRepository.instance.deleteById(id);
+		if (removed == null) {
+			return Response.
+					notModified().
+					entity("No Employee with id " + id + " found").
+					build();
+		} else {
+			return Response.ok().
+					entity("Employee removed: " + removed).build();
 		}
 	}
 

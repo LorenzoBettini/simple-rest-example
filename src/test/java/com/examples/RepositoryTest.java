@@ -65,6 +65,18 @@ public class RepositoryTest {
 		assertRepositorySize(1);
 	}
 
+	@Test
+	public void testDeleteByIdNonExistant() {
+		Employee e = newEmployee("ID1", "Test Employee", 0);
+		map.put("ID1", e);
+		assertSame(e, repository.deleteById("ID1"));
+	}
+
+	@Test
+	public void testDeleteById() {
+		assertNull(repository.deleteById("foo"));
+	}
+
 	private void assertRepositorySize(int expectedSize) {
 		assertEquals(expectedSize, repository.findAll().size());
 	}

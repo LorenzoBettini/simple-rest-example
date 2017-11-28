@@ -49,6 +49,10 @@ public class EmployeeRepository {
 		return employees.get(id);
 	}
 
+	public Employee deleteById(String id) {
+		return employees.remove(id);
+	}
+
 	/**
 	 * If the passed employee has no id, then it is
 	 * generated automatically.
