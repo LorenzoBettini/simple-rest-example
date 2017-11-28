@@ -1,15 +1,17 @@
 package com.examples;
 
-import java.util.List;
+import java.util.Collection;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.examples.model.Employee;
 import com.examples.repository.EmployeeRepository;
@@ -22,13 +24,13 @@ public class EmployeeResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_XML)
-	public List<Employee> getAllEmployees() {
+	public Collection<Employee> getAllEmployees() {
 		return EmployeeRepository.instance.findAll();
 	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Employee> getAllEmployeesJSON() {
+	public Collection<Employee> getAllEmployeesJSON() {
 		return EmployeeRepository.instance.findAll();
 	}
 
@@ -73,6 +75,40 @@ public class EmployeeResource {
 	public Response addEmployee(Employee employee) {
 		String result = "Employee saved : " + EmployeeRepository.instance.save(employee);
 		return Response.status(201).entity(result).build();
+	}
+
+	/**
+	 * Updates the Employee with the given id.
+	 * 
+	 * @param id
+	 * @param employee
+	 * @return
+	 */
+	@PUT
+	@Path("{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response updateEmployee(@PathParam("id") String id, Employee employee) {
+		Employee existing = EmployeeRepository.instance.findOne(id);
+		if (employee == null) {
+			return Response.
+					status(Status.BAD_REQUEST).
+					entity("Missing values for updating the Employee").
+					build();
+		}
+		if (existing == null) {
+			return Response.
+					notModified().
+					entity("No Employee with id " + id + " found").
+					build();
+		} else {
+			employee.setEmployeeId(id);
+			EmployeeRepository.instance.save(employee);
+			String result = "previous Employee: " +
+				existing.toString() + "\n" +
+				"updated with: " +
+				employee;
+			return Response.ok().entity(result).build();
+		}
 	}
 
 }

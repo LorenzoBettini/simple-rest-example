@@ -175,10 +175,7 @@ public class EmployeeResourceRestAssuredTest {
 	}
 
 	private void performPostAndAssertEmployeeInserted(String employeeName, String expectedId) {
-		JsonObject newObject = Json.createObjectBuilder()
-			.add("name", employeeName)
-			.add("salary", 1000)
-			.build();
+		JsonObject newObject = createJsonObjectParam(employeeName, 1000);
 
 		int employeeNumber = EmployeeRepository.instance.findAll().size();
 		String expectedEmployeeString = expectedEmployeeString(expectedId, employeeName);
@@ -202,8 +199,7 @@ public class EmployeeResourceRestAssuredTest {
 				EmployeeRepository.instance.findAll().size());
 		assertEquals(
 				expectedEmployeeString,
-				EmployeeRepository.instance.findAll().
-					get(employeeNumber).toString());
+				EmployeeRepository.instance.findOne(expectedId).toString());
 	}
 
 	private String expectedEmployeeString(String expectedId, String employeeName) {
@@ -213,4 +209,80 @@ public class EmployeeResourceRestAssuredTest {
 			+ employeeName
 			+ ", salary=1000]";
 	}
+
+	@Test
+	public void testUpdateEmployeeWithMissingJSON() {
+		given().
+			contentType(MediaType.APPLICATION_JSON).
+		when().
+			put(Main.BASE_URI + EMPLOYEES + "/ID1").
+		then().
+			statusCode(400);
+	}
+
+	@Test
+	public void testUpdateNonExistantEmployee() {
+		given().
+			contentType(MediaType.APPLICATION_JSON).
+			body(createJsonObjectParam("An employee", 1000).toString()).
+		when().
+			put(Main.BASE_URI + EMPLOYEES + "/IDfoo").
+		then().
+			statusCode(304);
+	}
+
+	@Test
+	public void testUpdateExistantEmployee() {
+		final String previousEmployee = "Employee [employeeId=ID1, name=First Employee, salary=1000]";
+		final String updatedEmployee = "Employee [employeeId=ID1, name=Updated, salary=5000]";
+
+		performPutAndAssertEmployee(
+			previousEmployee,
+			updatedEmployee);
+		// verify also idempotency:
+		// we update the already updated employee
+		// and nothing changes
+		performPutAndAssertEmployee(
+			updatedEmployee,
+			updatedEmployee);
+	}
+
+	private JsonObject createJsonObjectParam(String employeeName, int salary) {
+		return Json.createObjectBuilder()
+				.add("name", employeeName)
+				.add("salary", salary)
+				.build();
+	}
+
+	private void performPutAndAssertEmployee(final String expectedPreviousEmployeeString, final String expectedUpdatedEmployee) {
+		final String employeeName = "Updated";
+		JsonObject newObject = createJsonObjectParam(employeeName, 5000);
+
+		int employeeNumber = EmployeeRepository.instance.findAll().size();
+
+		given().
+			contentType(MediaType.APPLICATION_JSON).
+			body(newObject.toString()).
+		when().
+			put(Main.BASE_URI + EMPLOYEES + "/ID1").
+		then().
+			statusCode(200).
+			assertThat().
+			body(
+			equalTo(
+			"previous Employee: " 
+			+ expectedPreviousEmployeeString
+			+ "\n"
+			+ "updated with: "
+			+ expectedUpdatedEmployee)
+			);
+
+		// also check that the new employee is effectively updated
+		assertEquals(employeeNumber,
+				EmployeeRepository.instance.findAll().size());
+		assertEquals(
+				expectedUpdatedEmployee,
+				EmployeeRepository.instance.findOne("ID1").toString());
+	}
+
 }

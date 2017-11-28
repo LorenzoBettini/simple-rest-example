@@ -1,7 +1,8 @@
 package com.examples.repository;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.examples.model.Employee;
 
@@ -12,37 +13,55 @@ import com.examples.model.Employee;
  */
 public class EmployeeRepository {
 
-	public static final EmployeeRepository instance = new EmployeeRepository();
+	public static final EmployeeRepository instance =
+			new EmployeeRepository(new LinkedHashMap<>());
 
-	private List<Employee> employees = new LinkedList<>();
+	private Map<String, Employee> employees;
 
-	private EmployeeRepository() {
+	protected EmployeeRepository(Map<String, Employee> map) {
+		this.employees = map;
 		initialize();
 	}
 
 	public void initialize() {
 		employees.clear();
 		// initialize the "db" with some contents
-		employees.add(new Employee("ID1", "First Employee", 1000));
-		employees.add(new Employee("ID2", "Second Employee", 2000));
-		employees.add(new Employee("ID3", "Third Employee", 3000));
+		put(new Employee("ID1", "First Employee", 1000));
+		put(new Employee("ID2", "Second Employee", 2000));
+		put(new Employee("ID3", "Third Employee", 3000));
 	}
 
-	public List<Employee> findAll() {
-		return employees;
+	/**
+	 * Assumes that {@link Employee#getEmployeeId()} does not return null.
+	 * 
+	 * @param employee
+	 *            {@link Employee#getEmployeeId()} must not return null.
+	 */
+	private void put(Employee employee) {
+		employees.put(employee.getEmployeeId(), employee);
+	}
+
+	public Collection<Employee> findAll() {
+		return employees.values();
 	}
 
 	public Employee findOne(String id) {
-		return employees.
-				stream().
-				filter(e -> e.getEmployeeId().equals(id)).
-				findFirst().orElse(null);
+		return employees.get(id);
 	}
 
+	/**
+	 * If the passed employee has no id, then it is
+	 * generated automatically.
+	 * 
+	 * @param employee
+	 * @return the saved employee
+	 */
 	public Employee save(Employee employee) {
-		// dumb way of generating an automatic ID
-		employee.setEmployeeId("ID" + (employees.size() + 1));
-		employees.add(employee);
+		if (employee.getEmployeeId() == null) {
+			// dumb way of generating an automatic ID
+			employee.setEmployeeId("ID" + (employees.size() + 1));
+		}
+		put(employee);
 		return employee;
 	}
 
